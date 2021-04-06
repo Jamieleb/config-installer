@@ -27,11 +27,11 @@ func findNvimConfFiles(source string, re *regexp.Regexp) filepaths {
   return paths
 }
 
-func (fps filepaths) extractDirs() directories {
+func (files filepaths) extractDirs() directories {
   encounteredDirs := make(map[string]bool)
   uniqDirs := directories{}
 
-  for _, p := range fps {
+  for _, p := range files {
     if d := filepath.Dir(p); !encounteredDirs[d] {
       encounteredDirs[d] = true
       if d != "." {
