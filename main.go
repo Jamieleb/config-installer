@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"regexp"
-	"strings"
 )
 
 type pathList []string
@@ -15,33 +14,30 @@ func main() {
   targetDir := "~/.config/nvim"
   sourceDir := "~/config"
 
-  fmt.Println(files)
-  fmt.Println(dirsToCreate)
+  neovimSetup(sourceDir, targetDir)
 }
 
-func neovimSetup(src string, target string) error {
+func neovimSetup(src string, target string) {
   clearMessage := printMessage("Walking 'source' tree to locate Neovim configuration files...")
   files := findNvimConfFiles(src, regexp.MustCompile(`.*\.(vim|lua|yaml)$`))
   clearMessage()
 
-  clearMessage = printMessage("Creating required directories in " + target)
   dirsToCreate := files.extractDirs()
-  clearMessage()
 
+  clearMessage = printMessage("Removing old files and directories...")
   pathList(files).removeFilesOrDirs(target)
   pathList(dirsToCreate).removeFilesOrDirs(target)
+  clearMessage()
 
+  clearMessage = printMessage("Creating required directories in " + target)
   dirsToCreate.create(target)
+  clearMessage()
 
+  clearMessage = printMessage("Creating SymLinks for Neovim configuration files...")
   symlinkErrors := files.createSymLinks(src, target)
   if len(symlinkErrors) > 0 {
     for _, e := range symlinkErrors { fmt.Println("Error:", e) }
+  } else {
+    clearMessage()
   }
-
-
-}
-
-func printMessage(msg string) func() {
-  fmt.Print(msg)
-  return func() { fmt.Print(strings.Repeat("\b", len(msg))) }
 }
