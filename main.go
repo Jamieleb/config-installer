@@ -10,7 +10,7 @@ type filepaths pathList
 type directories pathList
 
 func main() {
-  targetDir := "/.config/nvim"
+  targetDir := "~/.config/nvim"
   sourceDir := "~/config"
 
   files := findNvimConfFiles(sourceDir, regexp.MustCompile(`.*\.(vim|lua|yaml)$`))
