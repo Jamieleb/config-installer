@@ -8,7 +8,6 @@ import (
 type pathList []string
 type filepaths pathList
 type directories pathList
-type message string
 
 func main() {
   targetDir := "~/.config/nvim"
