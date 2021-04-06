@@ -9,7 +9,6 @@ import (
 
 func findNvimConfFiles(source string, re *regexp.Regexp) filepaths {
   paths := filepaths{}
-  os.Chdir(source)
 
   err := filepath.Walk(source, func(p string, info os.FileInfo, err error) error {
     if err != nil {
