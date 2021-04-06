@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
 	"regexp"
 )
 
@@ -69,50 +67,4 @@ func removeOldLinksAndDirs(paths []path, dirs []dir, h string, td dir) ([]error,
   }
 
   return pathErrs, dirErrs
-}
-
-func findNvimConfFiles(home string, re *regexp.Regexp) []path {
-  ps := []path{}
-  os.Chdir(home + "/config")
-
-  err := filepath.Walk(".", func(p string, info os.FileInfo, err error) error {
-    if err != nil {
-        return err
-    }
-
-    if re.FindString(info.Name()) != "" {
-      ps = append(ps, path(p))
-    }
-    return nil
-  })
-  if err != nil {
-      log.Println(err)
-  }
-  return ps
-}
-
-func strInSlice(slice []string, str string) bool {
-  for _, s := range slice {
-    if s == str {
-      return true
-    }
-  }
-  return false
-}
-
-func getDirsFromPaths(paths []path) []dir {
-  keys := make(map[string]bool)
-  uniqDirs := []dir{}
-
-  for _, fp := range paths {
-    if d := filepath.Dir(string(fp)); !keys[d] {
-      keys[d] = true
-      // We don't want the root directory as it already exists
-      if d != "." {
-        uniqDirs = append(uniqDirs, dir(d))
-      }
-    }
-  }
-
-  return uniqDirs
 }
