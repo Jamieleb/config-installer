@@ -7,8 +7,6 @@ import (
 	"regexp"
 )
 
-type filepaths []string
-
 func findNvimConfFiles(source string, re *regexp.Regexp) filepaths {
   paths := filepaths{}
   os.Chdir(source)
@@ -29,9 +27,9 @@ func findNvimConfFiles(source string, re *regexp.Regexp) filepaths {
   return paths
 }
 
-func (fps filepaths) extractDirs() filepaths {
+func (fps filepaths) extractDirs() directories {
   encounteredDirs := make(map[string]bool)
-  uniqDirs := filepaths{}
+  uniqDirs := directories{}
 
   for _, p := range fps {
     if d := filepath.Dir(p); !encounteredDirs[d] {

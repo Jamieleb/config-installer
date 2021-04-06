@@ -6,17 +6,20 @@ import (
 	"regexp"
 )
 
+type pathList []string
+type filepaths pathList
+type directories pathList
+
 func main() {
   targetDir := "/.config/nvim"
-  home, hmErr := os.UserHomeDir()
-  if hmErr != nil {
-    fmt.Println("Error:", hmErr)
-    os.Exit(1)
-  }
+  sourceDir := "~/config"
 
-  files := findNvimConfFiles(home, regexp.MustCompile(`.*\.(vim|lua|yaml)$`))
+  files := findNvimConfFiles(sourceDir, regexp.MustCompile(`.*\.(vim|lua|yaml)$`))
   dirsToCreate := files.extractDirs()
-  removeOldLinksAndDirs(files, dirsToCreate, home, targetDir)
+
+  pathList(files).removeFilesOrDirs(targetDir)
+  pathList(dirsToCreate).removeFilesOrDirs(targetDir)
+
   createDirs(dirsToCreate, home, targetDir)
   createLinks(files, home, targetDir)
   fmt.Println(files)
@@ -45,23 +48,3 @@ func createLinks(files filepaths, home string, target string) []error {
   return errors
 }
 
-func removeOldLinksAndDirs(paths filepaths, dirs filepaths, h string, td string) ([]error, []error) {
-  pathErrs := []error{}
-  dirErrs := []error{}
-
-  for _, p := range paths {
-    err := os.Remove(h + string(td) + "/" + string(p))
-    if err != nil {
-      pathErrs = append(pathErrs, err)
-    }
-  }
-
-  for _, d := range dirs {
-    err := os.Remove(h + string(td) + "/" + string(d))
-    if err != nil {
-      dirErrs = append(dirErrs, err)
-    }
-  }
-
-  return pathErrs, dirErrs
-}
